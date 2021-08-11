@@ -1,0 +1,4 @@
+web_client: curl
+web_server: httpd
+web_package: httpd
+web_config_file: /etc/httpd/conf/httpd.conf

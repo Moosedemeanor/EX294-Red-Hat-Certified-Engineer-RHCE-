@@ -1,0 +1,43 @@
+---
+- name: playbook to launch http role and setup storage
+  hosts: all
+  roles: 
+    - http
+  tasks:
+    - name: setup storage on webservers
+      block:
+        - name: use parted to create filesystem on /dev/sdb
+          parted:
+            device: /dev/sdb
+            number: 1
+            state: present
+            label: gpt
+            part_type: primary
+            part_end: "100%"
+        - name: format /dev/sdb1 to xfs
+          filesystem:
+            dev: /dev/sdb1
+            fstype: xfs
+        - name: create the {{ web_dir }} directory on webservers
+          file:
+            path: "{{ web_dir }}"
+            state: directory
+            mode: 0755
+        - name: mount /dev/sdb to {{ web_dir }} on webservers
+          mount:
+            path: "{{ web_dir }}"
+            src: /dev/sdb1
+            fstype: xfs
+            state: present
+        - name: set selinux type on {{ web_dir }} directory
+          sefcontext:
+            target: '/web(/.*)?'
+            setype: "{{ selinux_type }}"
+            state: present
+        - name: run restorecon on {{ web_dir }}
+          command: restorecon -irv {{ web_dir }}
+        - name: copy index.html template to webservers
+          template:
+            src: index.html.j2
+            dest: "{{ web_file }}"
+      when: "'webservers' in group_names"

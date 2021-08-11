@@ -1,0 +1,11 @@
+---
+- name: ensure webclient.yml installs the curl package
+  hosts: webclients
+  tasks:
+    - name: install packages
+      package:
+        name: "{{ item }}"
+        state: latest
+      loop:
+        - "{{ web_client }}"
+        - "{{ web_server }}"

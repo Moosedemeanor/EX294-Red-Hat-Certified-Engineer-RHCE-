@@ -1,0 +1,35 @@
+---
+- name: install {{ web_server }}
+  package: 
+    name: "{{ web_server }}"
+    state: latest
+  when: "'webservers' in group_names"
+- name: copy the httpd.conf template file to the web server
+  template:
+    src: httpd.conf.j2
+    dest: /etc/httpd/conf/httpd.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart httpd
+  when: "'webservers' in group_names"
+- name: open up the firewall for {{ web_server }}
+  firewalld:
+    zone: public
+    service: "{{ firewall_web_service }}"
+    permanent: yes
+    state: enabled
+  notify: restart firewalld
+  when: "'webservers' in group_names"
+
+- name: install {{ web_client }} package
+  package:
+    name: "{{ web_client }}" 
+    state: latest
+  when: "'webclients' in group_names"
+- name: install {{ web_server }} package
+  package:
+    name: "{{ web_server }}"
+    state: latest
+  when: "'webclients' in group_names"
+...

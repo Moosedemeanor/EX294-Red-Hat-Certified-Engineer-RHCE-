@@ -1,0 +1,36 @@
+---
+- name: main webserver playbook for exam-a
+  hosts: webservers
+  vars_files:
+    vars/exam-a-vars
+  tasks:
+    - name: install httpd
+      package: 
+        name: "{{ web_server }}"
+        state: latest
+    - name: copy the httpd.conf template file to the web server
+      template:
+        src: httpd.conf.j2
+        dest: /etc/httpd/conf/httpd.conf
+        owner: root
+        group: root
+        mode: 0644
+      notify: restart httpd
+
+    - name: open up the firewall for the web_server
+      firewalld:
+        zone: public
+        service: "{{ firewall_web_service }}"
+        permanent: yes
+        state: enabled
+      notify: restart firewalld
+
+  handlers:
+    - name: restart httpd
+      service:
+        name: httpd
+        state: restarted
+    - name: restart firewalld
+      service:
+        name: firewalld
+        state: restarted

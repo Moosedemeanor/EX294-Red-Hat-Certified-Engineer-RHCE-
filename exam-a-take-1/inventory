@@ -1,0 +1,10 @@
+[all]
+control.example.com
+server1.example.com
+server2.example.com
+
+[webservers]
+server1.example.com
+
+[webclients]
+server2.example.com
