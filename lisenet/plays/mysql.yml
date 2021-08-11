@@ -1,0 +1,6 @@
+---
+- name: run the sample-mysql 
+  hosts: database
+  become: true 
+  roles:
+    - sample-mysql

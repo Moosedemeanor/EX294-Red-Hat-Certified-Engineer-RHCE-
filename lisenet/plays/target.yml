@@ -1,0 +1,10 @@
+---
+- name: default boot target
+  hosts: webservers_fqdn
+  become: true
+  tasks:
+    - name: set the default boot target to multi-user
+      file:
+        src: /usr/lib/systemd/system/multi-user.target
+        dest: /usr/lib/systemd/system/default.target
+        state: link

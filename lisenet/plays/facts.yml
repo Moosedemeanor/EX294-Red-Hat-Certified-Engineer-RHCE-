@@ -1,0 +1,14 @@
+---
+- name: Work with Ansible Facts
+  hosts: database_fqdn
+  become: true
+  tasks:
+    - name: ensure /etc/ansible/facts.d exists
+      file:
+        path: /etc/ansible/facts.d
+        state: directory
+    - name: create custom fact file
+      template:
+        src: database.fact.j2
+        dest: /etc/ansible/facts.d/database.fact
+        
