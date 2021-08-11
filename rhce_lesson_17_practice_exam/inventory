@@ -1,0 +1,27 @@
+[all]
+control.example.com
+ansible1.example.com
+ansible2.example.com ansible_port=2022
+ansible3.example.com ansible_port=2022
+ansible4.example.com ansible_port=2022
+
+[test]
+ansible1.example.com
+
+[dev]
+ansible2.example.com
+
+[prod]
+ansible3.example.com
+ansible4.example.com
+
+[servers:children]
+dev
+prod
+
+[webservers]
+ansible1.example.com
+
+[webclients]
+ansible2.example.com
+ansible3.example.com

@@ -1,0 +1,6 @@
+---
+- name: start geerlinguy galaxy roles
+  hosts: control
+  roles:
+    - geerlingguy.nginx
+#    - geerlingguy.docker

@@ -1,0 +1,33 @@
+---
+- name: task6 
+  hosts: servers
+  tasks:
+    - name: ensure selinux is enforcing
+      selinux:
+        policy: targeted
+        state: enforcing
+    - name: update selinux to use port 2022/tcp
+      seport:
+        ports: 2022
+        proto: tcp
+        setype: ssh_port_t
+        state: present    
+    - name: open the firewall for port 2022
+      firewalld:
+        zone: public
+        port: 2022/tcp
+        permanent: yes
+        state: enabled
+    - name: reload the firewalld service
+      service:
+        name: firewalld
+        state: restarted
+
+  roles:
+    - role: task6
+      vars:
+        ssh_port: "2022"
+        permit_root: "yes"
+        allow_users: ansible
+      when: 
+        - ansible_facts['os_family'] == "RedHat"

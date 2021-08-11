@@ -1,0 +1,10 @@
+web_package: httpd
+web_service: httpd
+web_config_file: /etc/httpd/conf/httpd.conf
+firewalld_service: http
+virtualhost_config: /etc/httpd/conf.d/rhce.conf
+web_index_file: /var/www/html/index.html
+client_packages:
+  - curl
+  - wget
+  - elinks

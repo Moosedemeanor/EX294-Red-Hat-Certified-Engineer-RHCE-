@@ -1,0 +1,15 @@
+---
+- name: task7 generic "web" playbook
+  hosts: all
+  tasks:
+    - debug:
+        msg: "Running Server Tasks on Web Servers"
+    - name: run task7-server.yml against webservers
+      include_tasks: task7/task7-server.yml
+      when: "'webservers' in group_names"
+
+    - debug:
+        msg: "Running Client Tasks on Web Clients"
+    - name: run task7-client.yml against webclients
+      include_tasks: task7/task7-client.yml
+      when: "'webclients' in group_names"

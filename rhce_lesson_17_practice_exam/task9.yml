@@ -1,0 +1,8 @@
+---
+- name: generate motd using a template
+  hosts: all
+  tasks:
+  - name: copy over the motd file
+    template:
+      src: templates/motd.j2
+      dest: /etc/motd

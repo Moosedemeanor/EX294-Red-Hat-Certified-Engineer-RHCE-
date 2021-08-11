@@ -1,0 +1,11 @@
+---
+- name: run the exam apache role
+  hosts: test
+  tasks:
+    - name: ensure firewalld is started before running role
+      service:
+        name: firewalld
+        state: started
+    - name: import the role
+      import_role:
+        name: exam-apache

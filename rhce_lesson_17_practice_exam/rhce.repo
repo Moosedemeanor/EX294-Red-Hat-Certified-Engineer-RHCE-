@@ -1,0 +1,11 @@
+[rhel-8-for-x86_64-baseos-rpms]
+name = Red Hat Enterprise Linux 8 for $basearch - BaseOS (RPMs)
+baseurl = ftp://control.example.com/repo/BaseOS/
+enabled = 1
+gpgcheck = 0
+
+[rhel-8-for-x86_64-appstream-rpms]
+name = Red Hat Enterprise Linux 8 for $basearch - AppStream (RPMs)
+baseurl = ftp://control.example.com/repo/AppStream
+enabled = 1
+gpgcheck = 0

@@ -1,0 +1,15 @@
+- name: include vars
+  include_vars: task7/task7-vars
+
+- name: configure the redpen codeready-builder repository
+  yum_repository:
+    name: redpen.codeready-builder
+    description: "RedPen CodeReady-Builder"
+    file: rhce.ansible
+    baseurl: https://redpen.dev/content/dist/rhel8/8/x86_64/codeready-builder/os/
+    enabled: yes
+    gpgcheck: no
+- name: install web client packages
+  package:
+    name: "{{ client_packages }}"
+    state: latest

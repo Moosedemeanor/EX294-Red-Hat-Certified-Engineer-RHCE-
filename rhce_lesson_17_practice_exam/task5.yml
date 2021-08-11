@@ -1,0 +1,10 @@
+---
+- name: build /etc/hosts from Ansible inventory
+  gather_facts: yes
+  hosts: all
+  tasks:
+    - name: build hosts from facts
+      template:
+        src: templates/hosts.j2
+        dest: /etc/hosts
+

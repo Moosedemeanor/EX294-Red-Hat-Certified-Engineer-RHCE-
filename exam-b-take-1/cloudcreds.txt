@@ -1,0 +1,2 @@
+CLOUDID=myid
+CLOUDPASS=cloudpass

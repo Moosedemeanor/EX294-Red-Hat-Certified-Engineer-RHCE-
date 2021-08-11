@@ -1,0 +1,39 @@
+---
+- name: set up control as a repository host
+  hosts: control
+  tasks:
+    - name: unmount /var/ftp/repo if mounted
+      mount:
+        path: /var/ftp/repo
+        state: unmounted
+    - name: create the /var/ftp/repo directory
+      file:
+        path: /var/ftp/repo
+        state: directory
+        mode: '0755'
+    - name: turn off Firewalld
+      service:
+        name: firewalld
+        state: stopped
+    - name: mount /dev/sr0 to /var/ftp/repo
+      mount:
+        path: /var/ftp/repo
+        src: /dev/sr0
+        fstype: iso9660
+        opts: ro
+        state: mounted
+    - name: install vsftpd
+      package:
+        name: vsftpd
+        state: latest
+    - name: copy vsftpd.conf.j2 to /etc/vsftpd/vsftpd.conf
+      template:
+        src: vsftpd.conf.j2
+        dest: /etc/vsftpd/vsftpd.conf
+        owner: root
+        group: root
+    - name: start the vsftpd service
+      service:
+        name: vsftpd
+        enabled: yes
+        state: started

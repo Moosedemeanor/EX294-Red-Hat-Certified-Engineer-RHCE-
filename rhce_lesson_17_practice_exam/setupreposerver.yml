@@ -1,0 +1,55 @@
+---
+- name: set up the control host as a repository
+  hosts: control.example.com
+  vars:
+    anonymous_enable: yes
+    local_enable: yes
+    write_enable: yes
+    anon_upload_enable: yes
+  tasks:
+  - name: turn off the firewalld service
+    service:
+      name: firewalld
+      state: stopped
+  - name: install vsftpd
+    package:
+      name: vsftpd
+      state: latest
+
+  - name: set up repository directory
+    file: 
+      path: /var/ftp/repo/
+      state: directory
+      
+  - name: mount the install dvd to /var/ftp/repo
+    mount:
+      path: /var/ftp/repo
+      src: /dev/sr0
+      fstype: iso9660
+      opts: ro,noauto
+      state: mounted
+
+#  - name: install createrepo
+#    package:
+#      name: createrepo
+#      state: latest
+#  - name: createrepo on the new repo
+#    shell:
+#      cmd: createrepo /var/ftp/repo
+
+  - name: ensure vsftpd settings via jinja2 template
+    template:
+      src: vsftpd.conf.j2
+      dest: /etc/vsftpd/vsftpd.conf
+      user: root
+      group: root
+      mode: 0600
+
+  - name: start the vsftpd service
+    service:
+      name: vsftpd
+      state: started
+      enabled: yes
+
+
+
