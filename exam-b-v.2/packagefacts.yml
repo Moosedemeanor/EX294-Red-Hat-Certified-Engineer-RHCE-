@@ -1,0 +1,19 @@
+---
+- name: get package information and write to file
+  hosts: exam_fqdn
+  tasks:
+    - name: gather the package facts
+      package_facts:
+        manager: auto
+    - name: print the package facts
+      debug:
+        var: ansible_facts.packages
+    - name: check the required package versions
+      lineinfile:
+        line: "{{ item }}={{ ansible_facts.packages[item][0].version }}"
+        path: /home/ansible/packages.txt
+        create: yes
+      loop:
+        - kernel
+        - bash
+        - glibc

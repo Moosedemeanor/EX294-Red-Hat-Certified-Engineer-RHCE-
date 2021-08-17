@@ -1,0 +1,49 @@
+---
+- name: setup exam c reposerver
+  hosts: control
+  tasks:
+    - name: disable the firewall
+      service:
+        name: firewalld
+        state: stopped
+        enabled: false
+    - name: install the ftp and vsftpd package
+      package:
+        name: "{{ item }}"
+        state: latest
+      loop:
+        - ftp
+        - vsftpd
+    - name: make /var/ftp/repo directory
+      file:
+        path: /var/ftp/repo
+        state: directory
+        mode: '0755'
+      ignore_errors: true
+    - name: copy vsftpd.conf template
+      template:
+        src: vsftpd.conf.j2
+        dest: /etc/vsftpd/vsftpd.conf
+    - name: mount /dev/sr0 DVD to /var/ftp/repo
+      mount:
+        path: /var/ftp/repo
+        src: /dev/sr0
+        fstype: iso9660
+        state: mounted
+    - name: set selinux context on /var/ftp/repo
+      sefcontext:
+        target: /var/ftp/repo(/.*)?'
+        setype: public_content_t
+        state: present
+    - name: apply new selinux file context
+      command: restorecon -irv /var/ftp/repo
+    - name: set seboolean to /var/ftp/repo
+      seboolean:
+        name: ftpd_full_access
+        state: yes
+        persistent: yes
+    - name: start vsftpd service
+      service:
+        name: vsftpd
+        state: started
+        enabled: yes

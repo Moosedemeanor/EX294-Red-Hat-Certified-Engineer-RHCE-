@@ -1,0 +1,42 @@
+---
+- name: create a hwtemplate.txt file
+  hosts: exam
+  tasks:
+    - name: create hwtemplate.txt
+      copy:
+        src: hwtemplate.txt
+        dest: /home/ansible/report.txt
+        mode: '0755'
+    - name: assign NAME from fact
+      lineinfile:
+        path: /home/ansible/report.txt
+        regexp: '^NAME='
+        line: NAME={{ ansible_fqdn }}
+    - name: assign IPADDRESS from fact
+      lineinfile:
+        path: /home/ansible/report.txt
+        regexp: '^IPADDRESS='
+        line: IPADDRESS={{ ansible_default_ipv4.address }}
+    - name: assign TOTAL_MEMORY from fact
+      lineinfile:
+        path: /home/ansible/report.txt
+        regexp: '^TOTAL_MEMORY='
+        line: TOTAL_MEMORY={{ ansible_memtotal_mb }}MB
+    - name: assign NIC_NAME from fact
+      lineinfile:
+        path: /home/ansible/report.txt
+        regexp: '^NIC_NAME='
+        line: NIC_NAME={{ ansible_default_ipv4.alias }}
+    - name: assign SECOND_NIC_NAME from fact
+      lineinfile:
+        path: /home/ansible/report.txt
+        regexp: '^SECOND_NIC_NAME='
+        line: SECOND_NIC_NAME={{ ansible_interfaces | difference (['lo',ansible_default_ipv4.alias])}}
+      when: "'ens224'in ansible_interfaces"
+    - name: assign SECOND_NIC_NAME from fact
+      lineinfile:
+        path: /home/ansible/report.txt
+        regexp: '^SECOND_NIC_NAME='
+        line: SECOND_NIC_NAME=NONE
+      when: "'ens224'not in ansible_interfaces"
+

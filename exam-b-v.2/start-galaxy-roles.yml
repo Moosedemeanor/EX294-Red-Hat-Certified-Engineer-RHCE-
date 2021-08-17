@@ -1,0 +1,5 @@
+---
+- hosts: test_fqdn
+  roles:
+#    - geerlingguy.docker
+    - geerlingguy.nginx

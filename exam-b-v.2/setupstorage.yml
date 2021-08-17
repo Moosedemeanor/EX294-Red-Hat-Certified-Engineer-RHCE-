@@ -1,0 +1,38 @@
+---
+- name: setup storage on second drive when available
+  hosts: exam_fqdn
+  tasks:
+    - name: run the below block on systems with /dev/sdb present
+      block:
+        - name: create 5GiB partition on /dev/sdb
+          parted:
+            device: /dev/sdb
+            number: 1
+            state: present
+            part_end: '100%'
+        - name: create lvm on partition named vgdata 8MiB extents
+          lvg:
+            vg: vgdata
+            pvs: /dev/sdb1
+            pesize: '8'
+        - name: create lv named lvdata 1Gib in size
+          lvol:
+            vg: vgdata
+            lv: lvdata
+            size: '1g'
+        - name: format the lv to ext3
+          filesystem:
+            fstype: ext3
+            dev: /dev/mapper/vgdata-lvdata
+        - name: create /data
+          file:
+            path: /data
+            state: directory
+            mode: '0755'
+        - name: mount lvdata to /data
+          mount:
+            path: /data
+            src: /dev/mapper/vgdata-lvdata
+            state: mounted
+            fstype: ext3
+      when: "'sdb' in ansible_devices"

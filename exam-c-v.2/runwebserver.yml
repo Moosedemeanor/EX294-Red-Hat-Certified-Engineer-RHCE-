@@ -1,0 +1,55 @@
+---
+- name: setup a webserver per task 6 practice exam c
+  hosts: test
+  tasks:
+    - name: install the httpd and firewalld package
+      package:
+        name: "{{ item }}"
+        state: latest
+      loop:
+        - httpd
+        - firewalld
+    - name: start firewalld
+      service:
+        name: firewalld
+        state: started
+        enabled: yes
+    - name: open http on firewalld
+      firewalld:
+        service: http
+        zone: public
+        permanent: yes
+        immediate: yes
+        state: enabled
+    - name: make the /webcontent directory
+      file:
+        path: /webcontent
+        state: directory
+        mode: '0755'
+        owner: root
+        group: root
+    - name: copy over template /webcontent/index.html 
+      template:
+        src: index.html.j2
+        dest: /webcontent/index.html
+        mode: '0755'
+    - name: create symlink to webcontent
+      file:
+        src: /webcontent/index.html
+        dest: /var/www/html/index.html
+        owner: root
+        group: root
+        state: link
+        mode: '0755'
+    - name: set selinux fconext on /webcontent
+      sefcontext:
+        target: '/webcontent(/.*)?'
+        setype: httpd_sys_content_t
+        state: present
+    - name: apply selinux context
+      command: restorecon -irv /webcontent
+    - name: start httpd
+      service:
+        name: httpd
+        state: started
+        enabled: yes

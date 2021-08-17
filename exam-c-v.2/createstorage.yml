@@ -1,0 +1,30 @@
+---
+- name: create lvm storage on prod systems
+  hosts: exam
+  tasks:
+    - name: create a prod system block
+      block:
+        - name: create a partition
+          parted:
+            device: /dev/sdb
+            number: 1
+            state: present
+            part_end: '100%'
+        - name: create a volume group vgdata
+          lvg:
+            vg: vgdata
+            pvs: /dev/sdb1
+            pesize: '32'
+      when: 
+        - ('prod' in group_names)
+        - ('sdb' in ansible_devices)
+    - name: run exist debug messages
+      debug:
+        msg: "vgprod does not exist"
+      when: ('vgdata' not in ansible_lvm.vgs)
+    - name: run size debug messages
+      debug: 
+        msg: "insufficient disk space available"
+      when: 
+        - ('vgdata' in ansible_lvm.vgs)
+        - (ansible_lvm.vgs.vgdata.size_g <= '1g')

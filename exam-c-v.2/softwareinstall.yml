@@ -1,0 +1,22 @@
+--- 
+- name: install software
+  hosts: exam
+  tasks:
+    - name: install perl and php on dev, test, and prod
+      package:
+        name: "{{ item }}"
+        state: latest
+      loop:
+        - perl
+        - php
+      when: ('prod' in group_names) or ('dev' in group_names) or ('test' in group_names)
+    - name: install 'Virtualization Host' on prod
+      yum:
+        name: "@Virtualization Host"
+        state: present
+      when: ('prod' in group_names)
+    - name: update servers in prod
+      package:
+        name: '*'
+        state: latest
+      when: ('prod' in group_names)

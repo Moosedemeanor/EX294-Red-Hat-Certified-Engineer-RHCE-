@@ -1,0 +1,28 @@
+---
+- name: create users from input file
+  hosts: exam
+  vars_files:
+    - users_pass.yml
+  tasks:
+    - name: create profs group
+      group:
+        name: profs
+        state: present
+        gid: 1008
+    - name: create students group
+      group:
+        name: students
+        state: present
+        gid: 1009
+    - name: prod server block
+      block:
+        - name: create user account
+          user:
+            name: "{{ item.name }}"
+            shell: /bin/bash
+            groups: "{{item.department}}"
+            append: yes
+            password: "{{ item.password | password_hash('sha512','salty') }}"
+          loop: "{{ users }}"
+          when: "'profs' in item.department"
+      when: "'prod' in group_names"

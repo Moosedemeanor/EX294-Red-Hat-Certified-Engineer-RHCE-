@@ -1,0 +1,16 @@
+---
+- name: use the vaultpass file in a playbook
+  hosts: exam_fqdn
+  vars_files:
+    - cloudpass.yml
+  tasks:
+    - name: print vault variables to file
+      lineinfile:
+        line: 'CLOUDID={{ CLOUDID }}'
+        path: /home/ansible/cloudcreds.txt
+        create: yes
+    - name: print the cloudpass to file
+      lineinfile:
+        line: 'COULDPASS={{ CLOUDPASS }}'
+        path: /home/ansible/cloudcreds.txt
+

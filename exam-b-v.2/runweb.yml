@@ -1,0 +1,39 @@
+---
+- name: apache web server playbook
+  hosts: test
+  tasks:
+    
+    - name: install the httpd and firewalld package
+      package:
+        name: "{{ item }}"
+        state: latest
+      loop:
+        - httpd
+        - firewalld
+    - name: start the httpd and firewalld service
+      service: 
+        name: "{{ item }}"
+        state: started
+        enabled: yes
+      loop:
+        - httpd
+        - firewalld
+    - name: open the firewall for http
+      firewalld:
+        zone: public
+        permanent: yes
+        immediate: yes
+        service: http
+        state: enabled
+    - name: copy over index.html template
+      template:
+        src: index.html.j2
+        dest: /var/www/html/index.html
+        mode: '0755'
+      notify: restart_httpd
+
+  handlers:
+    - name: restart_httpd
+      service:
+        name: httpd
+        state: restarted

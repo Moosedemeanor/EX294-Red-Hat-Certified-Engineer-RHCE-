@@ -1,0 +1,48 @@
+---
+- name: setup control as a repo server off iso
+  hosts: control.example.com
+  tasks:
+    - name: create /var/ftp/repo
+      file:
+        path: /var/ftp/repo
+        state: directory
+        mode: '0755'
+      ignore_errors: yes
+    - name: mount the iso to /var/ftp/repo
+      mount:
+        path: /var/ftp/repo
+        src: /dev/sr0
+        fstype: iso9660
+        state: mounted
+    - name: disable the firewalld service
+      service:
+        name: firewalld
+        state: stopped
+        enabled: no
+    - name: install the vsftpd package
+      package:
+        name: "{{ item }}"
+        state: latest
+      loop:
+        - vsftpd
+    - name: copy the vsftpd.conf file enabling anon access
+      template:
+        src: vsftpd.conf.j2
+        dest: /etc/vsftpd/vsftpd.conf
+    - name: start the vsftpd service
+      service:
+        name: vsftpd
+        state: started
+        enabled: yes
+    - name: set selinux context
+      sefcontext:
+        target: '/var/ftp/repo(/.*)?'
+        setype: public_content_rw_t
+        state: present
+    - name: set selinux seboolean
+      seboolean:
+        name: allow_ftpd_full_access
+        state: yes
+        persistent: yes
+    - name: apply selinux context
+      command: restorecon -irv /var/ftp/repo
