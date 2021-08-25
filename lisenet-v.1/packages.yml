@@ -1,0 +1,21 @@
+---
+- name: Software Packages
+  hosts: lisenet_fqdn
+  become: true
+  tasks:
+    - name: install tcpdump and mailx on proxy hosts
+      package:
+        name: "{{ item }}"
+        state: latest
+      loop:
+        - tcpdump
+        - mailx
+      when: "'proxy_fqdn' in group_names"
+    - name: install lsof and mailx on database hosts
+      package:
+        name: "{{ item }}"
+        state: latest
+      loop:
+        - lsof
+        - mailx
+      when: "'database_fqdn' in group_names"

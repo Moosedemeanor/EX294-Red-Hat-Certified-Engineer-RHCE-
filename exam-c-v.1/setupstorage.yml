@@ -1,0 +1,31 @@
+---
+- name: setup lvm storage on prod
+  hosts: exam
+  tasks:
+  - name: create a 2GiB partition on /dev/sdb
+    block:
+      - name: create storage
+        parted:
+          device: /dev/sdb
+          number: 1
+          state: present
+          part_end: 2.1GiB
+      - name: create vgdata
+        lvg:
+          vg: vgdata
+          pvs: /dev/sdb1
+          pesize: "32"
+      - name: 'fail if vgdata does not exist'
+        fail:
+          msg: "vgprod does not exist"
+        when: "'vgdata' not in ansible_lvm.vgs"
+      - name: 'fail is vgdata is smaller than 1GiB'
+        fail:
+          msg: "insufficient disk space available"
+        when: "'ansible_lvm.vgs.vgdata.size_g' <= '1'" 
+      - name: create lvdata
+        lvol:
+          vg: vgdata
+          lv: lvdata
+          size: 2g
+    when: "'sdb' in ansible_devices"

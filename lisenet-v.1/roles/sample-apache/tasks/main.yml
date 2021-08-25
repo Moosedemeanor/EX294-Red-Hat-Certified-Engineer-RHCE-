@@ -1,0 +1,36 @@
+---
+- name: The httpd, mod_ssl and php packages are installed.
+  package:
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - httpd
+    - mod_ssl
+    - php
+    - firewalld
+- name: Firewall is configured to allow all incoming traffic on HTTP port TCP 80 and HTTPS port TCP 443.
+  firewalld:
+    zone: public
+    service: "{{ item }}"
+    permanent: yes
+    immediate: yes
+    state: enabled
+  loop:
+    - http
+    - https
+- name: Apache service is running and enabled on boot.
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  loop:
+    - httpd
+    - firewalld
+- name: A Jinja2 template file index.html.j2 is used to create the file /var/www/html/index.htm
+  template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart_httpd

@@ -1,0 +1,11 @@
+[exam.baseos]
+name=Exam BaseOS
+baseurl=ftp://control.example.com/repo/BaseOS/
+enabled=1
+gpgcheck=0
+
+[exam.appstream]
+name=Exam AppStream
+baseurl=ftp://control.example.com/repo/AppStream/
+enabled=1
+gpgcheck=0

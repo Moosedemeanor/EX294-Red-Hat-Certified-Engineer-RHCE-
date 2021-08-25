@@ -1,0 +1,43 @@
+---
+- name: install {{ web_server }} and firewalld
+  package: 
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - "{{ web_server }}"
+    - firewalld
+  when: "'webservers' in group_names"
+
+- name: copy the httpd.conf template file to the web server
+  template:
+    src: httpd.conf.j2
+    dest: /etc/httpd/conf/httpd.conf
+    owner: root
+    group: root
+    mode: 0644
+  when: "'webservers' in group_names"
+
+- name: always trigger httpd handler
+  command: /bin/true
+  notify: restart_httpd
+  when: "'webservers' in group_names"
+
+- name: open up the firewall for {{ web_server }}
+  firewalld:
+    zone: public
+    service: "{{ firewall_web_service }}"
+    permanent: yes
+    immediate: yes
+    state: enabled
+  notify: restart_firewalld
+  when: "'webservers' in group_names"
+
+- name: install {{ web_client }} and {{ web_server }} package
+  package:
+    name: "{{ item }}" 
+    state: latest
+  loop:
+    - "{{ web_client }}"
+    - "{{ web_server }}"
+  when: "'webclients' in group_names"
+...

@@ -1,0 +1,10 @@
+---
+- name: install web_client package
+  package:
+    name: "{{ web_client }}" 
+    state: latest
+- name: install web_server package
+  package:
+    name: "{{ web_server }}"
+    state: latest
+...

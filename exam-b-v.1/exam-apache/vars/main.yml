@@ -1,0 +1,4 @@
+---
+web_package: httpd
+web_service: httpd
+firewall_service: http

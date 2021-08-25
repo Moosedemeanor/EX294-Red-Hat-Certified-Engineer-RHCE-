@@ -1,0 +1,43 @@
+---
+- name: create a system report on control with data from managed systems
+  hosts: exam
+  tasks:
+    - name: delete current hwtemplate.txt
+      file:
+        path: /home/ansible/hwtemplate.txt
+        state: absent
+    - name: log hostname
+      lineinfile:
+        path: /home/ansible/hwtemplate.txt
+        regexp: '^%NAME='
+        line: NAME={{ ansible_facts.fqdn }}
+        mode: "0755"
+        create: yes
+    - name: log ip address
+      lineinfile:
+        path: /home/ansible/hwtemplate.txt
+        regexp: '^%IPADDRESS='
+        line: IPADDRESS={{ ansible_default_ipv4.address }}
+        mode: "0755"
+    - name: log total memory
+      lineinfile:
+        path: /home/ansible/hwtemplate.txt
+        regexp: '^%TOTAL_MEMORY='
+        line: TOTAL_MEMORY={{ ansible_memory_mb.real.total }}MB
+        mode: "0755"
+    - name: log nic name
+      lineinfile:
+        path: /home/ansible/hwtemplate.txt
+        regexp: '^%NIC_NAME='
+        line: NIC_NAME={{ ansible_ens192.device }}
+        mode: "0755"
+#    - name: set the second_nic as a fact
+#      set_fact:
+#        second_nic_name: "{{ ansible_interfaces | difference (['lo', ansible_default_ipv4.alias]) | first }}"
+#        ignore_errors: yes
+    - name: log second nic
+      lineinfile:
+        path: /home/ansible/hwtemplate.txt
+        regexp: '^%SECOND_NIC_NAME='
+        line: SECOND_NIC_NAME={{ ansible_interfaces | difference (['lo', ansible_default_ipv4.alias])}}
+        mode: "0755"

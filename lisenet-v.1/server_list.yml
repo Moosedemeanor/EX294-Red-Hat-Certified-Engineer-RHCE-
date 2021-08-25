@@ -1,0 +1,12 @@
+---
+- name: create and use templates to create customize configuration files
+  hosts: database_fqdn
+  become: true
+  tasks:
+    - name: create /etc/server_list.txt on database
+      template:
+        src: server_list.txt.j2
+        dest: /etc/server_list.txt
+        mode: '0600'
+        owner: automation
+        setype: net_conf_t

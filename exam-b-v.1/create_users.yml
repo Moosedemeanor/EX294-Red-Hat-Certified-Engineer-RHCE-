@@ -1,0 +1,22 @@
+---
+- name: exam two create users playbook
+  hosts: exam_fqdn
+  vars_files:
+    - users_pass.yml
+  tasks:
+  - name: create profs group
+    group:
+      name: profs
+      state: present
+      gid: 1111
+  - name: create students group
+    group:
+      name: students
+      state: present
+      gid: 1112
+  - name: create user accounts
+    user:
+      name: "{{ item.name }}"
+      password: "{{ item.password | password_hash('sha256','salty') }}"
+      groups: "{{ item.department }}"
+    loop: "{{ users }}"

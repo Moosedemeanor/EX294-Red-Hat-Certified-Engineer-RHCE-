@@ -1,0 +1,10 @@
+#! /bin/bash
+
+for i in [1.2.32.3.4]
+do
+
+ansible ansible$i.example.com -u=root --ask-pass -m user -a "name=automation state=present"
+ansible ansible$i.example.com -u=root --ask-pass -m authorized_key -a "user=automation state=present key='{{ lookup('file', '/home/automation/.ssh/id_rsa.pub') }}'"
+ansible ansible$i.example.com -u=root --ask-pass -m lineinfile -a "path=/etc/sudoers.d/automation line='automation ALL=(ALL) NOPASSWD:ALL' create=yes"
+
+done

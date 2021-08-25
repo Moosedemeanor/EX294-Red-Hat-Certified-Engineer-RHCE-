@@ -1,0 +1,12 @@
+---
+- name: lisenet update motd - task 3
+  become: true
+  hosts:
+    - proxy
+    - webservers
+    - database
+  tasks: 
+    - name: update motd on servers
+      template:
+        src: motd.j2
+        dest: /etc/motd
