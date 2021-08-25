@@ -1,0 +1,7 @@
+---
+# vars file for sample-mysqlgroup_vars/database
+group_motd: MySQL
+group_motd: Apache
+group_motd: Proxy
+user_database: devops
+database_password: devops

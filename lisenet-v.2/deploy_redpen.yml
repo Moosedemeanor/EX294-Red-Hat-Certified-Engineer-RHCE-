@@ -1,0 +1,54 @@
+---
+- name: configure redpen rhel repository
+  hosts: lisenet_fqdn
+  become: true
+  tasks:
+  - name: import rhel gpg key
+    rpm_key:
+      state: present
+      key: https://www.redpen.dev/content/dist/rhel8/8/x86_64/RPM-GPG-KEY-redhat-release
+  - name: import epel gpg key
+    rpm_key:
+      state: present
+      key: https://www.redpen.dev/pub/epel/8/Everything/x86_64/RPM-GPG-KEY-EPEL-8
+
+  - name: configure the redpen baseos repository
+    yum_repository:
+      name: redpen.baseos
+      description: "RedPen BaseOS"
+      file: redpen.ansible
+      baseurl: https://redpen.dev/content/dist/rhel8/8/x86_64/baseos/os/
+      enabled: yes
+      gpgcheck: yes
+  - name: configure the redpen appstream repository
+    yum_repository:
+      name: redpen.appstream
+      description: "RedPen Appstream"
+      file: redpen.ansible
+      baseurl: https://redpen.dev/content/dist/rhel8/8/x86_64/appstream/os/
+      enabled: yes
+      gpgcheck: yes
+  - name: configure the redpen codeready-builder repository
+    yum_repository:
+      name: redpen.codeready-builder
+      description: "RedPen CodeReady-Builder"
+      file: redpen.ansible
+      baseurl: https://redpen.dev/content/dist/rhel8/8/x86_64/codeready-builder/os/
+      enabled: yes
+      gpgcheck: yes
+  - name: configure the redpen ansible repository
+    yum_repository:
+      name: redpen.ansible
+      description: "RedPen Ansible 2"
+      file: redpen.ansible
+      baseurl: https://redpen.dev/content/dist/layered/rhel8/x86_64/ansible/2/os/
+      enabled: yes
+      gpgcheck: yes
+  - name: configure the redpen epel repository
+    yum_repository:
+      name: redpen.epel
+      description: "RedPen EPEL"
+      file: redpen.ansible
+      baseurl: https://redpen.dev/pub/epel/8/Everything/x86_64/
+      enabled: yes
+      gpgcheck: yes

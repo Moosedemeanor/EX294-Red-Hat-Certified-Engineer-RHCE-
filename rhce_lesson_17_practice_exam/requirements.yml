@@ -1,8 +1,0 @@
-- src: geerlingguy.redis
-  version: 1.7.0
-  name: redis
-    
-- src: geerlingguy.nginx
-  version: 3.0.0
-  name: nginx
-  

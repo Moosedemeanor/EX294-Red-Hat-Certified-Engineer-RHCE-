@@ -1,5 +1,0 @@
-web_client: curl
-web_server: httpd
-web_service: httpd
-firewall_web_service: http
-web_config_file: /etc/httpd/conf/httpd.conf

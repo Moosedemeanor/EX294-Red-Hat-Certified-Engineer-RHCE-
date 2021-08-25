@@ -1,4 +1,0 @@
-package-ver:
-  - kernel
-  - bash
-  - glibc

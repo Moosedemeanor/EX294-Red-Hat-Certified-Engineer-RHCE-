@@ -1,0 +1,55 @@
+---
+- name: LISENET TASK 6 - Users and Groups
+  hosts: lisenet
+  become: true
+  vars_files:
+    - secret.yml
+    - user_list.yml
+  tasks:
+    - name: webserver uid 1 block
+      block:
+        - name: create users with uid starting with 1
+          user:
+            name: "{{ item.username }}"
+            uid: "{{ item.uid }}"
+            groups: wheel
+            shell: /bin/bash
+            password: "{{ user_password | password_hash('sha512','salty')}}"
+          loop: "{{ users }}"
+          when: 
+            - item.uid > 1000
+            - item.uid < 2000
+        - name: copy the automation pub ssh key
+          authorized_key:
+            user: "{{ item.username }}"
+            state: present
+            key: "{{ lookup('file', '/home/automation/.ssh/id_rsa.pub') }}"
+          loop: "{{ users }}"
+          when:
+            - item.uid > 1000
+            - item.uid < 2000
+
+      when: "'webservers' in group_names"
+    - name: database uid 2 block
+      block:
+        - name: create users with uid starting with 2
+          user:
+            name: "{{ item.username }}"
+            uid: "{{ item.uid }}"
+            groups: wheel
+            shell: /bin/bash
+            password: "{{ user_password | password_hash('sha512','salty')}}"
+          loop: "{{ users }}"
+          when:
+            - item.uid > 2000
+            - item.uid < 3000
+        - name: copy the automation pub ssh key
+          authorized_key:
+            user: "{{ item.username }}"
+            state: present
+            key: "{{ lookup('file', '/home/automation/.ssh/id_rsa.pub') }}"
+          loop: "{{ users }}"
+          when:
+            - item.uid > 2000
+            - item.uid < 3000
+      when: "'database' in group_names"

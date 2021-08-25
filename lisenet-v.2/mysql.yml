@@ -1,0 +1,6 @@
+---
+- name: LISENET TASK 9 - Create and Work with Roles
+  become: true
+  hosts: database
+  roles:
+    - sample-mysql

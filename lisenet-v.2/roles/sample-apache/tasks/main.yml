@@ -1,0 +1,35 @@
+---
+# tasks file for sample-apache
+- name: install httpd, mod_ssl, and php
+  package:
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - httpd
+    - mod_ssl
+    - php
+
+- name: start and enable httpd
+  service:
+    name: httpd
+    state: started
+    enabled: true
+
+- name: open the firewall for http/https
+  firewalld:
+    service: "{{ item }}"
+    permanent: true
+    immediate: true
+    zone: public
+    state: enabled
+  loop:
+    - http
+    - https
+
+- name: update index.html with a jinja2 template
+  template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+    mode: '0755'  
+  notify:
+    - restart_httpd

@@ -1,0 +1,14 @@
+---
+- name: LISENET TASK 3 - File Content
+  hosts: lisenet
+  become: true
+  tasks:
+    - name: remove current /etc/motd
+      file:
+        path: /etc/motd
+        state: absent
+      ignore_errors: true
+    - name: copy jinja2 template /etc/motd
+      template:
+        src: motd.j2
+        dest: /etc/motd

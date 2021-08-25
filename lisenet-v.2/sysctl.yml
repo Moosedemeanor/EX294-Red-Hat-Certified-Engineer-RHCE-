@@ -1,0 +1,18 @@
+- name: LISENET TASK 13 - Use Conditionals to Control Play Execution
+  hosts: lisenet
+  become: true
+  tasks:
+    - name: More than 2048MB RAM Block
+      block:
+        - name: change vm.swappiness to 10
+          sysctl:
+            name: vm.swappiness
+            value: '10'
+            state: present
+      when: ansible_memtotal_mb >= 2048
+    - name: Less than 2048MB RAM Block
+      block:
+        - name: provide debug message
+          debug:
+            msg: Sever memory less than 2048MB
+      when: ansible_memtotal_mb < 2048

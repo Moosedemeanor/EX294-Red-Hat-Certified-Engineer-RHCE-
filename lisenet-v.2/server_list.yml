@@ -1,0 +1,12 @@
+- name: LISENET TASK 18 - Create and Use Templates to Create Customized Configuration Files
+  become: true
+  hosts: database
+  tasks:
+    - name: template file of inventory hosts
+      template:
+        src: server_list.j2
+        dest: /etc/server_list.txt
+        owner: automation
+        mode: '0600'
+        setype: net_conf_t
+

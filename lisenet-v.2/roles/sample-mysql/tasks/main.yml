@@ -1,0 +1,90 @@
+---
+# tasks file for sample-mysql
+- name: create a primary partition on /dev/sdb
+  parted:
+    device: /dev/sdb
+    number: 1
+    state: present
+    part_end: 800MB
+
+- name: create volume group for above partition
+  lvg:
+    vg: vg_database
+    pvs: /dev/sdb1
+    pesize: '32'
+ 
+- name: create logical volume for above vg
+  lvol:
+    vg: vg_database
+    lv: lv_mysql
+    size: '512'
+
+- name: format lv to XFS
+  filesystem:
+    fstype: xfs
+    dev: /dev/mapper/vg_database-lv_mysql
+
+- name: make mount point directory
+  file:
+    path: /mnt/mysql_backups
+    state: directory
+    mode: '0755'
+
+- name: mount new lv to mount point
+  mount:
+    path: /mnt/mysql_backups
+    src: /dev/mapper/vg_database-lv_mysql
+    state: mounted
+    fstype: xfs
+
+- name: disable mysql yum module
+  yum:
+    disable_plugin: mysql
+
+- name: install perl, mysql, python3-PyMySQL, and firewalld
+  package:
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - perl
+    - python3-PyMySQL
+    - mysql-community-server
+    - firewalld
+
+- name: start mysqld and firewalld
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop:
+    - mysqld
+    - firewalld    
+
+- name: open 3306/tcp
+  firewalld:
+    zone: public
+    port: 3306/tcp
+    immediate: true
+    permanent: true
+    state: enabled
+
+- name: set root mysql password
+  mysql_user:
+    login_host: 'localhost'
+    login_user: 'root'
+    login_password: ''
+    name: 'root'
+    password: "{{ database_password }}"
+    state: present
+  ignore_errors: true
+
+- name: set mysql config file from template
+  template:
+    src: my.cnf.j2
+    dest: /etc/my.cnf
+    owner: root
+    group: root
+    mode: '0644'
+
+
+

@@ -1,0 +1,13 @@
+#! /bin/bash
+
+for i in [2.3.4.5]
+
+do
+
+	ansible ansible$i.hl.local --user=root -m user -a "name=automation"
+	ansible ansible$i.hl.local --user=root -m authorized_key -a "user=automation state=present key='{{ lookup('file', '/home/automation/.ssh/id_rsa.pub') }}'"
+	ansible ansible$i.hl.local --user=root -m shell -a "echo 'automation ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/automation"
+
+done
+
+ansible lisenet -m ping --become

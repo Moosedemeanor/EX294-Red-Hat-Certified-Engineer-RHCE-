@@ -1,6 +1,0 @@
----
-- name: install galaxy role on ansible4
-  hosts: ansible4.example.com 
-  roles:  
-    - redis
-    - nginx

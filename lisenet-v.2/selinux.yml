@@ -1,0 +1,8 @@
+- name: LISENET TASK 12 - Security
+  hosts: webservers
+  become: true
+  roles:
+  - role: rhel-system-roles.selinux
+    vars:
+      selinux_booleans:
+      - { name: 'httpd_can_network_connect', state: 'on', persistent: 'yes' }

@@ -1,0 +1,25 @@
+- name: LISENET TASK 16 - Software Packages
+  become: true
+  hosts: lisenet
+  tasks:
+    - name: proxy block
+      block:
+        - name: install tcpdump and mailx
+          package: 
+            name: "{{ item }}"
+            state: latest
+          loop:
+            - tcpdump
+            - mailx
+      when: "'proxy' in group_names"
+      
+    - name: database block
+      block:
+        - name: install lsof and mailx
+          package:
+            name: "{{ item }}"
+            state: latest
+          loop:
+            - lsof
+            - mailx
+      when: "'database' in group_names"

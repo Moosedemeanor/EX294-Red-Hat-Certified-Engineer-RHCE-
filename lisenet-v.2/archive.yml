@@ -1,0 +1,23 @@
+- name: LISENET TASK 14 - Use Archiving
+  become: true
+  hosts: database
+  tasks:
+    - name: create the archive directory
+      file:
+        path: /mnt/mysql_backups
+        state: directory
+        mode: '0755'
+        owner: 'root'
+        group: 'root'
+
+    - name: copy a file to archive directory
+      copy:
+        src: database_list.txt
+        dest: /mnt/mysql_backups
+        mode: '0755'
+
+    - name: archive that database_list.txt file into archive.gz
+      archive:
+        path: /mnt/mysql_backups/database_list.txt
+        dest: /mnt/mysql_backups/archive.gz
+        format: gz

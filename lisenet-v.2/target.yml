@@ -1,0 +1,9 @@
+- name: LISENET TASK 17 - Services
+  become: true
+  hosts: webservers
+  tasks:
+    - name: set default boot target to multi-user
+      file:
+        src: /usr/lib/systemd/system/multi-user.target
+        dest: /usr/lib/systemd/system/default.target
+        state: link

@@ -1,0 +1,17 @@
+---
+- name: LISENET TASK 7 - Scheduled Tasks
+  become: true
+  hosts: proxy
+  tasks:
+    - name: create /var/log/time.log
+      file:
+        path: /var/log/time.log
+        state: touch
+        mode: '0755'
+    - name: root cron job to append date to /var/log/time.log
+      cron:
+        name: "record time"
+        minute: "15"
+        hour: "*"
+        job: "date >> /var/log/time.log"
+        user: root

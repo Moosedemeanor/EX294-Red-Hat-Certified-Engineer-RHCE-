@@ -1,6 +1,0 @@
----
-- name: call the sample-apache role
-  hosts: webservers_fqdn
-  become: true
-  roles:
-    - sample-apache

@@ -1,0 +1,12 @@
+- name: LISENET TASK 15 - Work with Ansible Facts
+  become: true
+  hosts: database
+  tasks:
+    - name: ensure the custom facts directory exists
+      file:
+        path: /etc/ansible/facts.d
+        state: directory
+    - name: copy a custom fact to the target
+      copy:
+        src: server_role.fact
+        dest: /etc/ansible/facts.d/server_role.fact

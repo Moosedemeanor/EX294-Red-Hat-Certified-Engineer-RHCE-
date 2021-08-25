@@ -1,0 +1,14 @@
+---
+- name: LISENET TASK 8 - Software Repositories
+  become: true
+  hosts: database
+  tasks:
+    - name: Add multiple repositories into the same file (1/2)
+      yum_repository:
+        name: mysql80-community
+        description: MySQL 8.0 YUM Repo
+        file: mysql80-community
+        baseurl: http://repo.mysql.com/yum/mysql-8.0-community/el/8/x86_64/
+        gpgkey: http://repo.mysql.com/RPM-GPG-KEY-mysql
+        gpgcheck: yes
+        enabled: yes

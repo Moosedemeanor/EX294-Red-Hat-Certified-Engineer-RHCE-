@@ -1,0 +1,6 @@
+---
+# handlers file for sample-apache
+- name: restart_httpd
+  service:
+    name: httpd
+    state: restarted

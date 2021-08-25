@@ -1,0 +1,24 @@
+---
+- name: LISENET TASK 4 - Configure SSH Server
+  hosts: lisenet
+  become: true
+  tasks:
+    - name: set ssh x11
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^X11Forwarding'
+        line: X11Forwarding no
+    - name: set ssh maxauthtries
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#MaxAuthTries'
+        line: MaxAuthTries 3
+    - name: set ssh banner
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#Banner'
+        line: Banner /etc/motd
+    - name: restart ssh
+      service:
+        name: sshd
+        state: restarted
